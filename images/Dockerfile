@@ -65,6 +65,31 @@ RUN (type -p wget >/dev/null || (sudo apt update && sudo apt install wget -y)) \
     && sudo apt install gh -y \
     && rm -rf /var/lib/apt/lists/*
 
+# Install JDK 17
+RUN sudo apt update \
+    && sudo apt install -y openjdk-17-jdk maven \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Go
+ARG GO_VERSION=1.23.3
+RUN export GO_ARCH=$(dpkg --print-architecture) \
+    && if [ "$GO_ARCH" = "amd64" ]; then export GO_ARCH=amd64 ; fi \
+    && if [ "$GO_ARCH" = "arm64" ]; then export GO_ARCH=arm64 ; fi \
+    && wget -O go.tar.gz "https://go.dev/dl/go${GO_VERSION}.linux-${GO_ARCH}.tar.gz" \
+    && sudo rm -rf /usr/local/go \
+    && sudo tar -C /usr/local -xzf go.tar.gz \
+    && rm go.tar.gz \
+    && sudo ln -sf /usr/local/go/bin/go /usr/local/bin/go \
+    && sudo ln -sf /usr/local/go/bin/gofmt /usr/local/bin/gofmt
+
+# Install Python and uv
+RUN sudo apt update \
+    && sudo apt install -y python3 python3-pip python3-venv \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install uv
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh 
+
 RUN adduser --disabled-password --gecos "" --uid 1001 runner \
     && groupadd docker --gid 123 \
     && usermod -aG sudo runner \
