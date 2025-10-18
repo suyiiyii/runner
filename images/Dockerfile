@@ -93,8 +93,15 @@ RUN sudo apt update \
     && sudo apt install -y curl \
     && curl -fsSL https://deb.nodesource.com/setup_22.x | bash  \
     && sudo apt install -y nodejs \
+    && mkdir -p /home/runner/.npm-global \
+    && chown -R 1001:1001 /home/runner/.npm-global \
     && node --version \
+    && npm --version \
     && rm -rf /var/lib/apt/lists/*
+
+# Configure npm to use user-level global directory for runner user
+ENV NPM_CONFIG_PREFIX=/home/runner/.npm-global
+ENV PATH=/home/runner/.npm-global/bin:$PATH
 
 # Install uv
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh 
