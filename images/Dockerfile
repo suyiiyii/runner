@@ -88,24 +88,30 @@ RUN sudo apt update \
     && sudo apt install -y python3 python3-pip python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js (LTS) via NodeSource
-RUN sudo apt update \
-    && sudo apt install -y ca-certificates gnupg \
-    && sudo mkdir -p -m 755 /etc/apt/keyrings \
-    && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
-    && DISTRO="$(lsb_release -s -c)" \
-    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_MAJOR}.x ${DISTRO} main" | sudo tee /etc/apt/sources.list.d/nodesource.list > /dev/null \
-    && sudo apt update \
-    && sudo apt install -y nodejs \
-    && sudo corepack enable \
-    && sudo corepack install npm@latest \
-    && sudo corepack install pnpm@latest \
-    && sudo corepack install yarn@latest \
+# Install Node.js via NVM (Node Version Manager)
+ENV NVM_DIR=/home/runner/.nvm
+ENV NODE_VERSION=22
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash \
+    && export NVM_DIR="$HOME/.nvm" \
+    && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \
+    && [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" \
+    && nvm install ${NODE_VERSION} \
+    && nvm use ${NODE_VERSION} \
+    && nvm alias default ${NODE_VERSION} \
+    && corepack enable \
+    && corepack install npm@latest \
+    && corepack install pnpm@latest \
+    && corepack install yarn@latest \
+    && echo 'export NVM_DIR="$HOME/.nvm"' >> /home/runner/.bashrc \
+    && echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> /home/runner/.bashrc \
+    && echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> /home/runner/.bashrc \
+    && echo 'export PATH="$NVM_DIR/versions/node/v${NODE_VERSION}/bin:$PATH"' >> /home/runner/.bashrc \
+    && echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> /home/runner/.bashrc \
+    && npm config set prefix $HOME/.npm-global \
     && node --version \
     && npm --version \
     && pnpm --version \
-    && yarn --version \
-    && rm -rf /var/lib/apt/lists/*
+    && yarn --version
 
 # Install uv
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh 
