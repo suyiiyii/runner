@@ -37,6 +37,7 @@ RUN export RUNNER_ARCH=${TARGETARCH} \
     && chmod +x /usr/local/lib/docker/cli-plugins/docker-buildx
 
 FROM mcr.microsoft.com/dotnet/runtime-deps:8.0-jammy
+ARG NODE_MAJOR=22
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV RUNNER_MANUALLY_TRAP_SIG=1
@@ -85,6 +86,18 @@ RUN export GO_ARCH=$(dpkg --print-architecture) \
 # Install Python and uv
 RUN sudo apt update \
     && sudo apt install -y python3 python3-pip python3-venv \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js (LTS) via NodeSource
+RUN sudo apt update \
+    && sudo apt install -y ca-certificates gnupg \
+    && sudo mkdir -p -m 755 /etc/apt/keyrings \
+    && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
+    && DISTRO="$(lsb_release -s -c)" \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_MAJOR}.x ${DISTRO} main" | sudo tee /etc/apt/sources.list.d/nodesource.list > /dev/null \
+    && sudo apt update \
+    && sudo apt install -y nodejs \
+    && sudo corepack enable || true \
     && rm -rf /var/lib/apt/lists/*
 
 # Install uv
