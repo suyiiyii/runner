@@ -91,7 +91,7 @@ RUN sudo apt update \
 # Install Node.js via APT package manager for stability
 RUN sudo apt update \
     && sudo apt install -y curl \
-    && curl -fsSL https://deb.nodesource.com/setup_22.x | -E bash - \
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash  \
     && sudo apt install -y nodejs \
     && npm install -g pnpm yarn \
     && node --version \
