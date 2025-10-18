@@ -89,7 +89,6 @@ RUN sudo apt update \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js via NVM (Node Version Manager)
-ENV NVM_DIR=/home/runner/.nvm
 ENV NODE_VERSION=22
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash \
     && export NVM_DIR="$HOME/.nvm" \
@@ -112,6 +111,10 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | b
     && npm --version \
     && pnpm --version \
     && yarn --version
+
+# Set NVM_DIR for subsequent RUN commands and final container
+ENV NVM_DIR=/home/runner/.nvm
+ENV PATH="/home/runner/.nvm/versions/node/v22/bin:/home/runner/.npm-global/bin:$PATH"
 
 # Install uv
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh 
