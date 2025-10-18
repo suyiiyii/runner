@@ -88,33 +88,21 @@ RUN sudo apt update \
     && sudo apt install -y python3 python3-pip python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js via NVM (Node Version Manager)
-ENV NODE_VERSION=22
+# Install Node.js via NVM (Node Version Manager) - Following official installation method
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash \
     && export NVM_DIR="$HOME/.nvm" \
     && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \
-    && [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" \
-    && nvm install ${NODE_VERSION} \
-    && nvm use ${NODE_VERSION} \
-    && nvm alias default ${NODE_VERSION} \
+    && nvm install 22 \
+    && nvm use 22 \
+    && nvm alias default 22 \
     && corepack enable \
-    && corepack install npm@latest \
-    && corepack install pnpm@latest \
-    && corepack install yarn@latest \
-    && echo 'export NVM_DIR="$HOME/.nvm"' >> /home/runner/.bashrc \
-    && echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> /home/runner/.bashrc \
-    && echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> /home/runner/.bashrc \
-    && echo 'export PATH="$NVM_DIR/versions/node/v${NODE_VERSION}/bin:$PATH"' >> /home/runner/.bashrc \
-    && echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> /home/runner/.bashrc \
-    && npm config set prefix $HOME/.npm-global \
+    && corepack install npm \
+    && corepack install pnpm \
+    && corepack install yarn \
     && node --version \
     && npm --version \
     && pnpm --version \
     && yarn --version
-
-# Set NVM_DIR for subsequent RUN commands and final container
-ENV NVM_DIR=/home/runner/.nvm
-ENV PATH="/home/runner/.nvm/versions/node/v22/bin:/home/runner/.npm-global/bin:$PATH"
 
 # Install uv
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh 
