@@ -88,18 +88,15 @@ RUN sudo apt update \
     && sudo apt install -y python3 python3-pip python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js via NVM (Node Version Manager) - Following official installation method
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash \
-    && export NVM_DIR="$HOME/.nvm" \
-    && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \
-    && nvm install 22 \
-    && nvm use 22 \
-    && nvm alias default 22 \
+# Install Node.js via APT package manager for stability
+RUN sudo apt update \
+    && sudo apt install -y nodejs npm \
     && npm install -g pnpm yarn \
     && node --version \
     && npm --version \
     && pnpm --version \
-    && yarn --version
+    && yarn --version \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install uv
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh 
