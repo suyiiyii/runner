@@ -97,7 +97,14 @@ RUN sudo apt update \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_MAJOR}.x ${DISTRO} main" | sudo tee /etc/apt/sources.list.d/nodesource.list > /dev/null \
     && sudo apt update \
     && sudo apt install -y nodejs \
-    && sudo corepack enable || true \
+    && sudo corepack enable \
+    && sudo corepack install npm@latest \
+    && sudo corepack install pnpm@latest \
+    && sudo corepack install yarn@latest \
+    && node --version \
+    && npm --version \
+    && pnpm --version \
+    && yarn --version \
     && rm -rf /var/lib/apt/lists/*
 
 # Install uv
