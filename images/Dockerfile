@@ -96,7 +96,6 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | b
     && nvm use 22 \
     && nvm alias default 22 \
     && corepack enable \
-    && corepack install npm \
     && corepack install pnpm \
     && corepack install yarn \
     && node --version \
