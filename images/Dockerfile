@@ -95,9 +95,6 @@ RUN sudo apt update \
     && sudo apt install -y nodejs \
     && npm install -g pnpm yarn \
     && node --version \
-    && npm --version \
-    && pnpm --version \
-    && yarn --version \
     && rm -rf /var/lib/apt/lists/*
 
 # Install uv
