@@ -66,9 +66,9 @@ RUN (type -p wget >/dev/null || (sudo apt update && sudo apt install wget -y)) \
     && sudo apt install gh -y \
     && rm -rf /var/lib/apt/lists/*
 
-# Install JDK 17
+# Install JDK 21
 RUN sudo apt update \
-    && sudo apt install -y openjdk-17-jdk maven \
+    && sudo apt install -y openjdk-21-jdk maven \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Go
